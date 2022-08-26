@@ -36,6 +36,8 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
     ImageView verifystatus,imageshow;
     TextView name , dob, blood, gender,mobile,status;
     DatabaseReference unsafe= FirebaseDatabase.getInstance().getReference("unsafe"),user = FirebaseDatabase.getInstance().getReference("users");
+    TextView name1,name2,emernum1,emernum2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,11 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
         status = (TextView) findViewById(R.id.status);
         verifystatus = (ImageView) findViewById(R.id.verifystatus);
         imageshow = (ImageView) findViewById(R.id.imageshow);
+        //emergency
+        name1 = findViewById(R.id.relationName1);
+        name2 = findViewById(R.id.relationName2);
+        emernum1 = findViewById(R.id.emer1);
+        emernum2 = findViewById(R.id.emer2);
     }
 
 
@@ -129,6 +136,22 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
                             if(Objects.equals(snapshot4.getKey(), "BloodGroup"))blood.setText(snapshot4.getValue(String.class));
                             if(Objects.equals(snapshot4.getKey(), "Date of Birth"))dob.setText(snapshot4.getValue(String.class));
 
+                            if(Objects.equals(snapshot4.getKey(), "Relation01")){
+                                for(DataSnapshot snapshot5 : snapshot4.getChildren()){
+                                    String namer = snapshot5.getKey();
+                                    String num = (String) snapshot5.getValue();
+                                    name1.setText(namer + "'s Number");
+                                    emernum1.setText(num);
+                                }
+                            }
+                            if(Objects.equals(snapshot4.getKey(), "Relation02")){
+                                for(DataSnapshot snapshot5 : snapshot4.getChildren()){
+                                    String namer = snapshot5.getKey();
+                                    String num = (String) snapshot5.getValue();
+                                    name2.setText(namer + "'s Number");
+                                    emernum2.setText(num);
+                                }
+                            }
                         }
 
                     }
@@ -147,6 +170,15 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
         intent_04.setData(Uri.parse("tel:"+tel));
         startActivity(intent_04);
     }
+
+    public void callemergency(View view){
+        TextView txtview = (TextView) view;
+        Intent intent_04 = new Intent(Intent.ACTION_DIAL);
+        tel = txtview.getText().toString();
+        intent_04.setData(Uri.parse("tel:"+txtview.getText().toString()));
+        startActivity(intent_04);
+    }
+
     public void verifyuser(View view){
         unsafe.child(tel).child("verified").setValue("yes");
         Toast.makeText(this, "User has been Verified!", Toast.LENGTH_SHORT).show();
